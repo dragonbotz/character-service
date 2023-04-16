@@ -33,6 +33,7 @@ ENV PATH="/usr/lib/postgresql/15/bin:${PATH}"
 # Setup
 WORKDIR /database
 COPY init_database.sql .
+COPY init_database.sh .
 
 # Changes the user to postgres
 USER postgres
@@ -40,11 +41,5 @@ USER postgres
 # Starts the server
 RUN initdb -D /var/lib/postgresql/data
 
-# Start the service
-CMD ["service", "postgresql", "start"]
-
-# Init database
-CMD ["psql", "-f", "init_database.sql"]
-
-# Run postgresql
+# Starts the database
 CMD ["postgres", "-D", "/var/lib/postgresql/data"]
