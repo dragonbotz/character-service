@@ -3,7 +3,6 @@ name = "character-service"
 version = "0.1.0"
 edition = "2021"
 authors = ["Lahcène Belhadi <lahcene.belhadi@gmail.com>"]
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 # HTTP Support for the API
@@ -11,11 +10,11 @@ authors = ["Lahcène Belhadi <lahcene.belhadi@gmail.com>"]
 [dependencies.actix-web]
 version = "4.0"
 
+[dependencies.dbzlib-rs]
+path = "../dbzlib-rs"
+
 # SQL query
 # https://crates.io/crates/sqlx
 [dependencies.sqlx]
 version = "0.6"
-features = ["runtime-tokio-native-tls"]
-
-[dependencies.dbzlib-rs]
-path = "../dbzlib-rs"
+features = ["runtime-tokio-native-tls", "postgres"]
