@@ -4,3 +4,4 @@
 //!
 //! Authors: Lahcène Belhadi <lahcene.belhadi@gmail.com>
 pub mod api;
+pub mod database;
