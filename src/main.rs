@@ -8,27 +8,27 @@
 mod core;
 
 use crate::core::api::route;
-
-use std::process::exit;
+use crate::core::database::Database;
 
 use actix_web::{App, HttpServer};
 
 #[actix_web::main]
 async fn main() {
-    let mut server = HttpServer::new(|| App::new().service(route::root));
+    // Establishes a connection to the database
+    let database = Database::new().await;
+    if let Err(error) = database {
+        panic!("An error occured while establishing a connection to the database: {error}")
+    }
 
-    server = match server.bind(("127.0.0.1", 8080)) {
-        Ok(server) => server,
-        Err(error) => {
-            println!("An error occured while binding ip adress and port to server: {error}");
-            exit(1);
-        }
-    };
+    // Setup server
+    let server = HttpServer::new(|| App::new().service(route::root)).bind(("127.0.0.1", 8080));
+    if let Err(error) = server {
+        panic!("An error occured while binding server to ip adress and port: {error}")
+    }
 
-    println!("Character service's API running: http://127.0.0.1:8080/");
-
-    if let Err(error) = server.run().await {
-        println!("An error occured while running the HTTP server: {error}");
-        exit(1);
+    // Runs the server
+    let running_server = server.unwrap().run().await;
+    if let Err(error) = running_server {
+        panic!("An error occured while running the server: {error}")
     }
 }
