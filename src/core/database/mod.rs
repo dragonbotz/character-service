@@ -3,7 +3,7 @@
 //! This module contains the implementation of the Database connection
 //!
 //! Authors: Lahcène Belhadi <lahcene.belhadi@gmail.com>
-use dbzlib_rs::utils::error::{DbzError, Result};
+use dbzlib_rs::util::error::{Error, Result};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 pub struct Database {
@@ -20,7 +20,7 @@ impl Database {
             .await
         {
             Ok(pool) => pool,
-            Err(error) => return Err(DbzError::Database(error.to_string())),
+            Err(error) => return Err(Error::DatabaseConnection(error)),
         };
 
         Ok(Self { pool })
