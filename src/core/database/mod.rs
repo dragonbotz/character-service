@@ -20,7 +20,7 @@ impl Database {
             .await
         {
             Ok(pool) => pool,
-            Err(error) => return Err(Error::DatabaseConnection(error)),
+            Err(error) => return Err(Error::DatabaseConnection(error.to_string())),
         };
 
         Ok(Self { pool })
