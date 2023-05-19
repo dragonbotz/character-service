@@ -7,7 +7,7 @@
 use core::fmt;
 
 // Custom Result type
-type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// Not recoverable errors
 pub enum Error {
