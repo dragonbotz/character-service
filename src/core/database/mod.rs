@@ -6,7 +6,8 @@
 
 use dbzlib_rs::{
     model::character::Character,
-    util::error::{Error, Result},
+    util::error::{Error, ErrResult},
+    util::exception::{Exception, ExcResult},
 };
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
@@ -17,7 +18,7 @@ pub struct Database {
 
 impl Database {
     /// Creates a new instance of Database and establishes a connection
-    pub async fn new() -> Result<Self> {
+    pub async fn new() -> ErrResult<Self> {
         // Establishes a connection the local CharacterDB
         let pool = match PgPoolOptions::new()
             .max_connections(5)
@@ -55,14 +56,18 @@ impl<'a> CharacterRepository<'a> {
     ///
     /// # Arguments
     /// * character - the Character to add
-    pub async fn add(&self, character: Character) -> Result<()> {
-        let character = sqlx::query("INSERT INTO character(name, image_url) VALUES($1, $2)")
+    pub async fn add(&self, character: Character) -> ExcResult<()> {
+        let result = sqlx::query("INSERT INTO character(name, image_url) VALUES($1, $2)")
             .bind(character.name())
             .bind(character.image_url())
             .execute(self.pool)
             .await;
 
-        println!("{:?}", character);
+        // unable to add a new character
+        if let Err(error) = result {
+            return Err(Exception::InsertNewCharacter(error.to_string()));
+        }
+
         Ok(())
     }
 
@@ -70,13 +75,17 @@ impl<'a> CharacterRepository<'a> {
     ///
     /// # Arguments:
     /// * id - the character id
-    pub async fn get(&self, id: i64) -> Result<Character> {
+    pub async fn get(&self, id: i64) -> ExcResult<Character> {
         let character = sqlx::query_as::<_, Character>("SELECT * FROM character WHERE id = $1")
             .bind(id)
             .fetch_one(self.pool)
             .await;
 
-        println!("{:?}", character);
+        // unable to retrieve the character
+        if let Err(error) = character {
+            return Err(Exception::RetrieveCharacter(error.to_string()));
+        }
+
         Ok(character.unwrap())
     }
 }
