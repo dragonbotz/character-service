@@ -10,6 +10,7 @@ use dbzlib_rs::{
 };
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
+#[derive(Clone)]
 pub struct Database {
     pool: sqlx::Pool<Postgres>,
 }
@@ -63,5 +64,19 @@ impl<'a> CharacterRepository<'a> {
 
         println!("{:?}", character);
         Ok(())
+    }
+
+    /// Returns a character with same id as the one passed as parameter
+    ///
+    /// # Arguments:
+    /// * id - the character id
+    pub async fn get(&self, id: i64) -> Result<Character> {
+        let character = sqlx::query_as::<_, Character>("SELECT * FROM character WHERE id = $1")
+            .bind(id)
+            .fetch_one(self.pool)
+            .await;
+
+        println!("{:?}", character);
+        Ok(character.unwrap())
     }
 }

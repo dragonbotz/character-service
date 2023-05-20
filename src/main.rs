@@ -7,8 +7,7 @@
 
 mod core;
 
-use core::database::{self, Database};
-
+use crate::core::database::Database;
 use crate::core::api::route;
 
 use actix_web::{App, HttpServer};
@@ -16,13 +15,13 @@ use actix_web::{App, HttpServer};
 #[actix_web::main]
 async fn main() {
     let database = Database::new().await;
-    if database.is_err() {
-        panic!();
+    if let Err(error) = database {
+        panic!("{error}")
     }
     let database = database.unwrap();
 
     // Setup server
-    let server = HttpServer::new(|| {
+    let server = HttpServer::new(move || {
         App::new()
             .app_data(database.pool().clone())
             .service(route::root)

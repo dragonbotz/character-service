@@ -29,3 +29,11 @@ async fn add(
 
     HttpResponse::Ok().body("The character has been added!")
 }
+
+#[get("/get/{id}")]
+async fn get(database_pool: web::Data<Pool<Postgres>>, id: web::Path<i64>) -> impl Responder {
+    CharacterRepository::new(&database_pool)
+        .get(id.into_inner())
+        .await;
+    HttpResponse::Ok()
+}
