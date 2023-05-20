@@ -7,10 +7,10 @@
 
 mod core;
 
-use crate::core::database::Database;
 use crate::core::api::route;
+use crate::core::database::Database;
 
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 
 #[actix_web::main]
 async fn main() {
@@ -23,9 +23,10 @@ async fn main() {
     // Setup server
     let server = HttpServer::new(move || {
         App::new()
-            .app_data(database.pool().clone())
+            .app_data(web::Data::new(database.pool().clone()))
             .service(route::root)
             .service(route::add)
+            .service(route::get)
     })
     .bind(("127.0.0.1", 8080));
     if let Err(error) = server {
