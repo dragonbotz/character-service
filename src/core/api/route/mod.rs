@@ -24,7 +24,8 @@ async fn add(
         .add(character.into_inner())
         .await
     {
-        return HttpResponse::InternalServerError().body("Unable to add character");
+        println!("{error}");
+        return HttpResponse::BadRequest().body(format!("{error}"));
     }
 
     HttpResponse::Ok().body("The character has been added!")
@@ -32,8 +33,24 @@ async fn add(
 
 #[get("/get/{id}")]
 async fn get(database_pool: web::Data<Pool<Postgres>>, id: web::Path<i64>) -> impl Responder {
-    CharacterRepository::new(&database_pool)
+    let character = CharacterRepository::new(&database_pool)
         .get(id.into_inner())
         .await;
+
+    if let Err(error) = character {
+        println!("{error}");
+        return HttpResponse::NotFound().body(format!("{error}"));
+    }
+    let character = character.unwrap();
+
+    HttpResponse::Ok().json(character)
+}
+
+#[get("/get-many")]
+async fn get_many(database_pool: web::Data<Pool<Postgres>>) -> impl Responder {
+    CharacterRepository::new(&database_pool)
+        .get_many(vec![1, 2, 3])
+        .await;
+
     HttpResponse::Ok()
 }

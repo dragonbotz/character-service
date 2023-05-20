@@ -5,11 +5,11 @@
 //! Authors: Lahcène Belhadi <lahcene.belhadi@gmail.com>
 
 use dbzlib_rs::{
-    model::character::Character,
-    util::error::{Error, ErrResult},
-    util::exception::{Exception, ExcResult},
+    model::character::{Character, CharacterBuilder},
+    util::error::{ErrResult, Error},
+    util::exception::{ExcResult, Exception},
 };
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres, Row};
 
 #[derive(Clone)]
 pub struct Database {
@@ -87,5 +87,43 @@ impl<'a> CharacterRepository<'a> {
         }
 
         Ok(character.unwrap())
+    }
+
+    /// Returns a collection of character according to ids passed as parameter
+    ///
+    /// # Arguments
+    /// * ids - the collection of ids to retrieve characters from
+    pub async fn get_many(&self, ids: Vec<i64>) -> ExcResult<Vec<Character>> {
+        // creates a comma separated list of ids as String
+        let ids = ids
+            .iter()
+            .map(|id| id.to_string())
+            .collect::<Vec<_>>()
+            .join(",");
+
+        let result = sqlx::query(format!("SELECT * FROM character WHERE id IN ({})", ids).as_str())
+            .fetch_all(self.pool)
+            .await;
+
+        // unable to retrieve all the characters
+        if let Err(error) = result {
+            return Err(Exception::RetrieveMultipleCharacters(error.to_string()));
+        }
+        let characters = result.unwrap();
+
+        // for each entries, retrieve the character
+        // and add it to the character collection
+        let mut characters_collection = Vec::<Character>::new();
+        for row in characters {
+            let character = CharacterBuilder::new()
+                .id(row.get::<i64, _>("id"))
+                .name(row.get::<String, _>("name"))
+                .image_url(row.get::<String, _>("image_url"))
+                .build();
+
+            characters_collection.push(character);
+        }
+
+        Ok(characters_collection)
     }
 }

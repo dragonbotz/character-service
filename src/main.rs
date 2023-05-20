@@ -27,6 +27,7 @@ async fn main() {
             .service(route::root)
             .service(route::add)
             .service(route::get)
+            .service(route::get_many)
     })
     .bind(("127.0.0.1", 8080));
     if let Err(error) = server {
