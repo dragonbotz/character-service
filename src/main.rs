@@ -8,20 +8,14 @@
 mod core;
 
 use crate::core::api::route;
-use crate::core::database::Database;
 
 use actix_web::{App, HttpServer};
 
 #[actix_web::main]
 async fn main() {
-    // Establishes a connection to the database
-    let database = Database::new().await;
-    if let Err(error) = database {
-        panic!("An error occured while establishing a connection to the database: {error}")
-    }
-
     // Setup server
-    let server = HttpServer::new(|| App::new().service(route::root)).bind(("127.0.0.1", 8080));
+    let server = HttpServer::new(|| App::new().service(route::root).service(route::add))
+        .bind(("127.0.0.1", 8080));
     if let Err(error) = server {
         panic!("An error occured while binding server to ip adress and port: {error}")
     }
