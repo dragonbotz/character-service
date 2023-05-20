@@ -11,7 +11,7 @@ authors = ["Lahcène Belhadi <lahcene.belhadi@gmail.com>"]
 version = "4.0"
 
 [dependencies.dbzlib-rs]
-path = "lib/dbzlib-rs"
+path = "dbzlib-rs"
 
 # SQL query
 # https://crates.io/crates/sqlx
