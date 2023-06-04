@@ -39,7 +39,19 @@ COPY init_database.sh .
 USER postgres
 
 # Starts the server
+RUN mkdir -p /var/lib/postgresql/data/
 RUN initdb -D /var/lib/postgresql/data
+
+# Copies config
+COPY pg_hba.conf /var/lib/postgresql/data
+COPY postgresql.conf /var/lib/postgresql/data
+
+USER root
+
+RUN chmod 777 /var/lib/postgresql/data/pg_hba.conf
+RUN chmod 777 /var/lib/postgresql/data/postgresql.conf
+
+USER postgres
 
 # Starts the database
 CMD ["postgres", "-D", "/var/lib/postgresql/data"]

@@ -15,8 +15,6 @@ services:
 
 volumes:
   dbz-character-database-volume:
-    external: true
-
 
 # J'ai viré network mode et l'ai remplacé par ports
 # J'ai changé /var/lib/postgresql/data/postgresql.conf 

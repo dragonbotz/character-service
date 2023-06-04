@@ -19,6 +19,7 @@ cd .tmpdocker
 
 cp ../res/init_database.sql .
 cp ../res/init_database.sh .
+cp ../res/*.conf .
 
 sudo docker build \
 	-f ../database.Dockerfile \
