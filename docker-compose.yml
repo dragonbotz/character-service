@@ -4,7 +4,8 @@ services:
     image: "dbz-character-service-db"
     volumes:
       - "dbz-character-database-volume:/var/lib/postgresql/data"
-    network_mode: host
+    ports:
+      - "5432:5432"
 
   character_service:
     image: "dbz-character-service"
@@ -14,4 +15,7 @@ services:
 
 volumes:
   dbz-character-database-volume:
-    external: true
+
+# J'ai viré network mode et l'ai remplacé par ports
+# J'ai changé /var/lib/postgresql/data/postgresql.conf 
+# - J'ai changé listen addresses à *
