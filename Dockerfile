@@ -16,8 +16,6 @@ RUN apt update && apt install -y \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN source $HOME/.cargo/env
 
-RUN $HOME/.cargo/bin/cargo --help
-
 WORKDIR app
 
 # clone service
