@@ -1,27 +1,11 @@
 # Character service Dockerfile
 #
 # Authors: Lahcène Belhadi <lahcene.belhadi@gmail.com>
-FROM ubuntu:22.04
+FROM debian:12.1-slim
 
-SHELL ["/bin/bash", "-c"]
-
-RUN apt update && apt install -y \
-	curl \
-	build-essential \
-	git \
-	pkg-config \
-	libssl-dev
-
-# install Rust tools
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN source $HOME/.cargo/env
+RUN apt update && apt install -y openssl
 
 WORKDIR app
+COPY target/release/character-service .
 
-# clone service
-RUN git clone --recurse-submodules https://github.com/dragonbotz/character-service.git
-WORKDIR character-service
-
-RUN $HOME/.cargo/bin/cargo build --release
-
-CMD ["./target/release/character-service"]
+CMD ["./character-service"]
