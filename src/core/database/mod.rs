@@ -19,10 +19,17 @@ pub struct Database {
 impl Database {
     /// Creates a new instance of Database and establishes a connection
     pub async fn new() -> ErrResult<Self> {
+        let mut pg_password = String::new();
+        if let Ok(pass) = std::env::var("DBZ_PG_SUPERUSER_PASS") {
+            pg_password = pass;
+        } else {
+            return Err(Error::DatabaseConnection("Unable to find \"DBZ_PG_SUPERUSER_PASS\" environment variable".to_string()))
+        }  
+
         // Establishes a connection the local CharacterDB
         let pool = match PgPoolOptions::new()
             .max_connections(5)
-            .connect("postgresql://postgres@127.0.0.1:5432/characterdb")
+            .connect("postgresql://postgres:{pg_password}@127.0.0.1:5432/characterdb")
             .await
         {
             Ok(pool) => pool,
