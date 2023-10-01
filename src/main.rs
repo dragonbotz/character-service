@@ -29,7 +29,7 @@ async fn main() {
             .service(route::get)
             .service(route::get_many)
     })
-    .bind(("127.0.0.1", 8080));
+    .bind(("0.0.0.0", 8080));
     if let Err(error) = server {
         panic!("An error occured while binding server to ip adress and port: {error}")
     }
