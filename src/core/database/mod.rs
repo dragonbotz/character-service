@@ -29,7 +29,7 @@ impl Database {
         // Establishes a connection the local CharacterDB
         let pool = match PgPoolOptions::new()
             .max_connections(5)
-            .connect("postgresql://postgres:{pg_password}@dbz-character-database:5432/characterdb")
+            .connect(format!("postgresql://postgres:{pg_password}@dbz-character-database:5432/characterdb").as_str())
             .await
         {
             Ok(pool) => pool,
