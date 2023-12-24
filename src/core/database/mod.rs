@@ -126,6 +126,7 @@ impl<'a> CharacterRepository<'a> {
                 .id(row.get::<i64, _>("id"))
                 .name(row.get::<String, _>("name"))
                 .image_url(row.get::<String, _>("image_url"))
+                .rarity(row.get::<i16, _>("rarity"))
                 .build();
 
             characters_collection.push(character);
