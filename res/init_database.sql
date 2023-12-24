@@ -18,6 +18,6 @@ CREATE DATABASE characterdb;
 CREATE TABLE IF NOT EXISTS character (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(35),
-    image_url TEXT
+    image_url TEXT,
+	rarity SMALLINT
 );
-
